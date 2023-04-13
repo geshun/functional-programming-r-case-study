@@ -74,7 +74,7 @@ The **`map()`** function from the **`purrr`** package (part of **`tidyverse`**) 
 
 > As an example of reading a remote data into **`R`**, this is a GitHub URL to access the `gdp` dataset. Use the **`read_csv()`** function to get the data into **`R`**. Also, try reading all the 3 files (`gdp.csv`, `life_expectancy.csv` and `population.csv`) as a list of data frames (`tibbles`) using the **`map()`** function discussed in the tutorial.
 >
-> \<provide github URL\>
+> `https://github.com/geshun/functional-programming-r-case-study/raw/main/data/gdp.csv`
 
 ```{r}
 #| label: challenge-read-github-data

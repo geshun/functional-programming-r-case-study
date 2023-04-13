@@ -122,17 +122,16 @@ dfs <- csv_files |> lapply(\(df) read.csv(df, check.names = FALSE))
 
 > As an example of reading a remote data into **`R`**, this is a GitHub URL to access the `gdp` dataset. Use the **`read_csv()`** function to get the data into **`R`**. Also, try reading all the 3 files (`gdp.csv`, `life_expectancy.csv` and `population.csv`) as a list of data frames (`tibbles`) using the **`map()`** function discussed in the tutorial.
 >
-> \<provide github URL\>
+> `https://github.com/geshun/functional-programming-r-case-study/raw/main/data/gdp.csv`
 
 ```{r}
 #| label: challenge-read-github-data
 
-# change the URL to the correct one
-
 files <- c("gdp", "life_expectancy", "population")
-url <- "https://github.com/geshun/analytics-group/raw/main/weeks/7/"
+url <- "https://github.com/geshun/functional-programming-r-case-study/raw/main/data/"
 paths <- str_c(url, files, ".csv")
 map(paths, read_csv)
+# lapply(paths, read.csv)
 ```
 
 #### Challenge 2

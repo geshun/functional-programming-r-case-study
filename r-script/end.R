@@ -54,9 +54,10 @@ dfs <- csv_files |> lapply(\(df) read.csv(df, check.names = FALSE))
 
 ### Challenge 1 ----
 files <- c("gdp", "life_expectancy", "population")
-url <- "https://github.com/geshun/analytics-group/raw/main/weeks/7/"
+url <- "https://github.com/geshun/functional-programming-r-case-study/raw/main/data/"
 paths <- str_c(url, files, ".csv")
 map(paths, read_csv)
+# lapply(paths, read.csv)
 
 ### Challenge 2 ----
 fs::dir_map(path = "data", fun = read_csv)
