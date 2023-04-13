@@ -1,0 +1,425 @@
+---
+title: "Functional Programming for Data Science with R"
+subtitle: "A real world example to facilitate data pre-processing with Tidyverse"
+author: 
+  name: "fiiinspires"
+  email: "fiiinspires@gmail.com"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading package
+
+Load the **`tidyverse`** package.
+
+```{r}
+#| label: load-tidyverse
+```
+
+## Reading dataset into R's environment
+
+### Reading file into memory
+
+List the three `.csv` files in the `data` directory and assign to a variable `csv_files`
+
+```{r}
+#| label: define-csv-files
+```
+
+### Unifying the datasets
+
+A simple code to read and combine the three datasets as one.
+
+### Reading a single file
+
+Using the **`read_csv()`** function from the **`readr`** component of the **`tidyverse`** package, read in the `gdp` dataset.
+
+```{r}
+#| label: read-gdp-dataset
+```
+
+### Reading multiple files
+
+Read the population and life expectancy files simultaneously using the **`read_csv()`** function.
+
+```{r}
+#| label: read-population-life_expectancy-datasets
+```
+
+### Reading all files the right way
+
+The **`map()`** function from the **`purrr`** package (part of **`tidyverse`**) allows us to iterate a function over a vector and hence abstracting `for-loop`. Use it to iterate the **`read_csv()`** function over all the three datasets. Assign the result to a variable `dfs`.
+
+```{r}
+#| label: read-all-files
+```
+
+#### Tip
+
+> The **`fread()`** function from the **`data.table`** package and the **`vroom()`** function from the **`vroom`** package are fast in reading delimited files. They can auto-detect the separator or the delimiter of the file.
+
+#### Challenge 1
+
+> As an example of reading a remote data into **`R`**, this is a GitHub URL to access the `gdp` dataset. Use the **`read_csv()`** function to get the data into **`R`**. Also, try reading all the 3 files (`gdp.csv`, `life_expectancy.csv` and `population.csv`) as a list of data frames (`tibbles`) using the **`map()`** function discussed in the tutorial.
+>
+> \<provide github URL\>
+
+```{r}
+#| label: challenge-read-github-data
+```
+
+#### Challenge 2
+
+> Use the **`dir_map()`** function from the **`fs`** package to directly apply the **`read_csv()`** function to all the files in the `data` directory. In this case, there is no reason to list the files prior to reading.
+
+```{r}
+#| label: challenge-directly-read-files-in-folder
+```
+
+## Mutating, reshaping and cleaning data
+
+### Setting names attribute
+
+Give clean names to the elements of the list of data frames by removing the `data/` directory and `.csv` extension. Re-assign to a variable `dfs`.
+
+```{r}
+#| label: set-names
+```
+
+#### Tip
+
+> The base **`R`** pipe operator **`|>`** is widely used within the **`tidyverse`** community to replace the **`magrittr`** pipe operator **`%>%`**. Thus, to use **`%>%`**, one needs a package and people do not want this extra dependency.
+
+### Checking column data type
+
+Apply the base **`R`** **`typeof()`** function and find the unique data types of the columns in the `gdp` data frame.
+
+```{r}
+#| label: use-typeof-function-gdp
+```
+
+#### Tip
+
+> The **`map()`** function has variations useful whenever the applied function returns a vector of length `1`. See also the **`map_vec()`** function.
+
+#### Tip
+
+> The **`typeof()`** function provides the internal data type or storage format of an object in **`R`**. Using it on a factor object for instance returns `integer`. Also, the **`class()`** function on an ordered factor is a character vector of length `2`, which is not a unique class. It's important to have a consistent method to identify data types.
+
+To get a consistent data types similar to the one displayed on the column header of a data frame (`tibble`), replace the **`typeof()`** function with the **`type_sum()`** function from the **`pillar`** package (part of **`tidyverse`**).
+
+```{r}
+#| label: use-type_sum-function-gdp
+```
+
+The **`every()`** function from the **`purrr`** package can help determine if every column is say numeric or not. Use it to check the column types.
+
+```{r}
+#| label: use-every-function-gdp
+```
+
+### Writing a function to find column types
+
+Write a function **`get_col_type()`** that takes a data frame and returns the distinct column types. Use the **`type_sum()`** function from the **`pillar`** package instead of the **`typeof()`** function.
+
+```{r}
+#| label: function-get_col_type
+```
+
+Iterate the **`get_col_type()`** function over the data frames in the `dfs` list.
+
+```{r}
+#| label: apply-get_col_type
+```
+
+#### Tip
+
+> The ellipses (dot-dot-dot) approach of supplying additional argument to a mapping function **`map(select, -country)`** can be misleading and sometimes difficult to debug. Instead, consider using anonymous function **`map(\(df) select(df, -country))`** or a one-sided formula **`map(~select(.x, -country))`** when appropriate.
+
+### Mutating column as character
+
+Write a function **`mutate_as_chr()`** that takes a data frame and transforms non-character columns to character via the **`mutate()`** function from the **`dplyr`** package (part of **`tidyverse`**).
+
+```{r}
+#| label: function-mutate_as_chr
+```
+
+Apply the **`mutate_as_chr()`** function to each of the data frames in `dfs`. Also, establish that all the columns are now of character type using the **`get_col_type()`** function you wrote.
+
+```{r}
+#| label: apply-mutate_as_chr
+```
+
+#### Tip
+
+> A predicate function returns either `TRUE` or `FALSE`.
+
+### Modifying column as character
+
+The **`modify_if()`** function from the **`purrr`** package can be used to alter the elements of a vector based on a condition. Use it to write an alternative function to **`mutate_as_chr()`**. Call this function **`modify_as_chr()`**.
+
+```{r}
+#| label: function-modify_as_chr
+```
+
+Iterate the **`modify_as_chr()`** function over the list of data frames `dfs`. Establish that the columns are all of character type.
+
+```{r}
+#| label: apply-modify_as_chr
+```
+
+#### Challenge
+
+> The `col_types` argument of the **`read_csv()`** can be used to define column specifications. Use it to set all the columns to character type.
+
+```{r}
+#| label: challenge-col_type
+```
+
+### Reshaping from wide to long data frame
+
+The **`pivot_longer()`** function from **`tidyr`** package (part of **`tidyverse`**) reshapes a wide data frame to long. The years of a record is spread across multiple columns. Use **`pivot_longer()`** function to gather them as one column. Re-assign the result to `dfs`.
+
+```{r}
+#| label: gather-year-columns
+```
+
+#### Tip
+
+> The **`pivot_longer()`** function returns an error if the columns to combine are of different types.
+
+### Adding extra columns to data frame
+
+Write a function **`adorn_col()`** which takes a data frame and mutates it using a specified value. The specified value should also be an argument of the function and the name of the new column should be `source`.
+
+```{r}
+#| label: function-adorn_col
+```
+
+With the help of the **`map2()`** function from the **`purrr`** package, use the **`adorn_col()`** function to add extra columns to the data frames in the `dfs` variable using the name of the list element as value.
+
+```{r}
+#| label: apply-adorn-col
+```
+
+Replace the **`map2()`** function in the earlier code with the **`imap()`** function from **`purrr`** package. Also, with the help of the **`reduce()`** function from **`purrr`** package, find the union of all the three data frames using the **`union()`** function from **`dplyr`**. Assign the result to a variable `df`.
+
+```{r}
+#| label: map-reduce
+```
+
+#### Challenge
+
+> Use **`pmap()`** from the **`purrr`** package to apply the **`adorn_col()`** function to mutate the list of dataframes `dfs`.
+
+```{r}
+#| label: challenge-using-pmap
+```
+
+Modify the **`adorn_col()`** function so that it can take any column name instead of the hard coded name - `source`
+
+```{r}
+#| label: function-adorn_col-modified
+```
+
+### Counting missing records
+
+Write a function `count_na()` that takes a vector and tells the number of entries that are missing.
+
+```{r}
+#| label: function-count_na
+```
+
+Iterate the `count_na()` function over the columns of the `df` data frame and get a count of missing entries in each column.
+
+```{r}
+#| label: apply-count_na
+```
+
+### Dealing with records with missing entries
+
+Filter for records with missing values.
+
+```{r}
+#| label: filter-na-records
+```
+
+Establish that for each country with missing records, `NA`s occurred on the same date.
+
+```{r}
+#| label: distinct-years-missing
+```
+
+Drop the missing records from the data frame `df` and re-assign to `df`.
+
+```{r}
+#| label: drop-missing-records
+```
+
+### Cleaning the columns
+
+The `value` column of our `df` data frame is of character type due to the presence of number labels, `k` for thousand, `M` for million and `B` for billion. Write a function that converts the column to numeric. For instance, `2k` should be `2000`. Call this function **`label_to_num()`**.
+
+```{r}
+#| label: function-label_to_num
+```
+
+Modify the `value` column of `df` using the **`label_to_num()`** function to get the numerical representation of the values. Also, convert the `year` column to integer and the `country` column to factor. Re-assign the resulting data frame to `df`.
+
+```{r}
+#| label: use-label_to_num
+```
+
+#### Tip
+
+> Each case or condition in the **`case_when()`** function from the **`dplyr`** package is evaluated sequentially and this can be slow sometimes.
+
+#### Challenge
+
+> Use only the **`str_replace_all()`** function from the **`stringr`** package (part of **`tidyverse`**) to address the problem of converting the `value` column in the `df` data frame to numeric.
+
+```{r}
+#| label: challenge-str_replace_all
+```
+
+### Reshaping from long to wide data frame
+
+To give `gdp`, `life_expectancy` and `population` their respective columns, use the **`pivot_wider()`** function from **`tidyr`** package to reshape the data `df` to wide format. Also, mutate the population column as integer and name the resulting data frame `df_wide`.
+
+```{r}
+#| label: pivot-long-to-wide
+```
+
+#### Challenge
+
+> Using the **`count_na()`** function we wrote earlier, find how many entries are missing. Filter for records with missing values and justify whether those records can be dropped.
+
+```{r}
+#| label: challenge-count_na
+```
+
+### Composing data pre-processing steps
+
+Write a custom function **`read_and_combine()`** which takes a vector of `csv` file paths and unifies them as a single data frame.
+
+```{r}
+#| label: function-read_and_combine
+```
+
+Use the **`read_and_combine()`** function on the `csv_files` vector.
+
+```{r}
+#| label: use-read_and_combine
+```
+
+Write a custom function **`reshape_to_long()`** that takes a data frame (output of **`read_and_combine()`** function) and pivots the year columns to long.
+
+```{r}
+#| label: function-reshape_to_long
+```
+
+Use the **`reshape_to_long()`** function on the output of the **`read_and_combine()`** function.
+
+```{r}
+#| label: use-reshape_to_long
+```
+
+Write a custom function **`reshape_to_wide()`** that can take the output of the **`reshape_to_long()`** function and split `gdp`, `life_expectancy` and `population` into their respective columns.
+
+```{r}
+#| label: function-reshape_to_wide
+```
+
+Use the **`reshape_to_wide()`** function on the output of the **`reshape_to_long()`** function.
+
+```{r}
+#| label: use-reshape_to_wide
+```
+
+Compose a function using the three functions **`read_and_combine()`**, **`reshape_to_long()`** and **`reshape_to_wide()`**. Call this composed function **`preprocess_data()`**. This function when supplied with the `csv_files` vector should produce the final and cleaned data frame.
+
+```{r}
+#| label: function-preprocess_data
+```
+
+Use the **`preprocess_data()`** function on the `csv_files` vector.
+
+```{r}
+#| label: use-preprocess_data
+```
+
+#### Saving data object
+
+Save the `df_wide` data frame to file. Save it as `gdp_population_life.rds`.
+
+```{r}
+#| label: save-as-rds
+```
+
+## Performing basic EDA
+
+### Computing summary statistics
+
+Using the `df_wide` data frame, describe China's `gdp` and `life_expectancy` over the periods `2000` to `2009`. Here use the **`select()`** function from **`dplyr`** to get only the `gdp` and `life_expectancy` columns.
+
+```{r}
+#| label: summary-statistics-select
+```
+
+Repeat the above summary statistics using the **`keep()`** function from **`purrr`** instead of the **`select()`** function to get the `gdp` and `life_expectancy` columns.
+
+```{r}
+#| label: summary-statistics-keep
+```
+
+#### Challenge
+
+> Implement the earlier code for finding the summary of `gdp` and `life expectancy` using the **`discard()`** function instead of the **`keep()`** function.
+
+```{r}
+#| label: challenge-summary-statistics-discard
+```
+
+### Finding group correlation coefficient
+
+Find the correlation coefficient between `gdp` and `life_expectancy` of China and India. Consider the records between `2000` and `2009`.
+
+```{r}
+#| label: correlation-coefficient
+```
+
+#### Challenge
+
+> Complete the code to compute the correlation coefficient between `gdp` and `life expectancy`.
+>
+> ```{df_wide |>}
+>   filter(country %in% c("India", "China"), year %in% 2000:2009) |>
+>   nest(data = -country) |>
+>   mutate(correlation = "WRITE CODE HERE WITHOUT THE QUOTES") |>
+>   unnest(correlation)
+> ```
+
+```{r}
+#| label: challenge-correlation-coefficient
+```
+
+### Generating multiple scatter plots
+
+Using the **`ggplot2`** package (part of **`tidyverse`**), make a scatter plot to visualize the relationship between `gdp` and `life_exepctancy` of China and India for the periods `2000` to `2009`. Visualize plots for both countries on the same canvas.
+
+```{r}
+#| label: scatter-plot-together
+```
+
+Repeat the above but generate individual plots, one for each country.
+
+```{r}
+#| label: scatter-plot-individual
+```
+
+## Conclusion
+
+Great job for successfully completing the tutorial on data pre-processing and manipulation using functional approach.
