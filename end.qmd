@@ -6,8 +6,6 @@ author:
   email: fiiinspires@gmail.com
 format: html
 editor: visual
-editor_options: 
-  chunk_output_type: inline
 ---
 
 ```{r}
