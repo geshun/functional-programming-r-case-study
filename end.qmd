@@ -292,13 +292,13 @@ dfs |>
 > ```{r}
 > #| echo: false
 > #| eval: false
-> >
+>
 > map(dfs, select, -country) # ellipses (...)
-> >
+>
 > map(dfs, \(df) select(df, -country)) # shorthand anonymous function
-> >
+>
 > map(dfs, function(df) select(df, -country)) # anonymous function
-> >
+>
 > map(dfs, ~select(.x, -country)) # one-sided formula 
 > ```
 
@@ -384,6 +384,9 @@ Iterate the **`modify_as_chr()`** function over the list of data frames `dfs`. E
 dfs |>
   map(modify_as_chr) |>
   map(\(df) every(df, is.character))
+
+dfs <- dfs |>
+  map(modify_as_chr)
 ```
 
 ```{r}
@@ -394,6 +397,9 @@ dfs |>
 dfs |>
   lapply(modify_as_chr) |>
   lapply(\(df) all(vapply(df, is.character, logical(1))))
+
+dfs <- dfs |>
+  lapply(modify_as_chr)
 ```
 
 #### Challenge
@@ -752,7 +758,7 @@ count_na(df_wide)
 df_wide |> filter(if_any(.col = everything(), .fns = is.na))
 ```
 
-> With the data in this format, we cannot droprecords with missing values since that will affect variables like `gdp` and `population` we intend analyzing.
+> With the data in this format, we cannot drop records with missing values since that will affect variables like `gdp` and `population` we intend analyzing.
 
 ### Composing data pre-processing steps
 
