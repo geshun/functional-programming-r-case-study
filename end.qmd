@@ -292,13 +292,13 @@ dfs |>
 > ```{r}
 > #| echo: false
 > #| eval: false
-> >
+>
 > map(dfs, select, -country) # ellipses (...)
-> >
+>
 > map(dfs, \(df) select(df, -country)) # shorthand anonymous function
-> >
+>
 > map(dfs, function(df) select(df, -country)) # anonymous function
-> >
+>
 > map(dfs, ~select(.x, -country)) # one-sided formula 
 > ```
 
@@ -966,6 +966,8 @@ df_wide |>
 > Complete the code to compute the correlation coefficient between `gdp` and `life expectancy`.
 >
 > ```{r}
+> #| eval: false
+> #| echo: false
 > df_wide |>
 >   filter(country %in% c("India", "China"), year %in% 2000:2009) |>
 >   nest(data = -country) |>
