@@ -484,7 +484,10 @@ Find the correlation coefficient between `gdp` and `life_expectancy` of China an
 
 > Complete the code to compute the correlation coefficient between `gdp` and `life expectancy`.
 >
-> ```{df_wide |>}
+> ```{r}
+> #| eval: false
+> #| echo: false
+> df_wide |>
 >   filter(country %in% c("India", "China"), year %in% 2000:2009) |>
 >   nest(data = -country) |>
 >   mutate(correlation = "WRITE CODE HERE WITHOUT THE QUOTES") |>

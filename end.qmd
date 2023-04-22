@@ -292,13 +292,13 @@ dfs |>
 > ```{r}
 > #| echo: false
 > #| eval: false
->
+> >
 > map(dfs, select, -country) # ellipses (...)
->
+> >
 > map(dfs, \(df) select(df, -country)) # shorthand anonymous function
->
+> >
 > map(dfs, function(df) select(df, -country)) # anonymous function
->
+> >
 > map(dfs, ~select(.x, -country)) # one-sided formula 
 > ```
 
@@ -863,7 +863,7 @@ Save the `df_wide` data frame to file. Save it as `gdp_population_life.rds`.
 ```{r}
 #| label: save-as-rds
 
-write_rds(df_wide, file = "gdp_population_life")
+write_rds(df_wide, file = "gdp_population_life.rds")
 ```
 
 ```{r}
